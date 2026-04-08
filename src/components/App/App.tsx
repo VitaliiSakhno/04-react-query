@@ -15,7 +15,6 @@ import type { Movie } from "../../types/movie";
 import toast, { Toaster } from "react-hot-toast";
 
 import "./App.module.css";
-import ReactPaginate from "react-paginate";
 
 function App() {
   const [query, setQuery] = useState("");
