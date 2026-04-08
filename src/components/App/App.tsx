@@ -7,7 +7,7 @@ import Loader from "../Loader/Loader";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import MovieGrid from "../MovieGrid/MovieGrid";
 import MovieModal from "../MovieModal/MovieModal";
-import Pagination from "../Pagination/Pagination";
+import Pagination from "../ReactPaginate/ReactPaginate";
 
 import { fetchMovies } from "../../services/movieService";
 import type { Movie } from "../../types/movie";
@@ -21,7 +21,7 @@ function App() {
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, isSuccess } = useQuery({
     queryKey: ["movies", query, currentPage],
     queryFn: () => fetchMovies(query, currentPage),
     enabled: query !== "",
@@ -35,12 +35,12 @@ function App() {
     setQuery(query);
     setCurrentPage(1);
   };
-  
+
   useEffect(() => {
-    if (data && movies.length === 0) {
+    if (isSuccess) {
       toast('No movies found on your request');
     }
-  }, [data]);
+  }, [isSuccess]);
 
   const handleSelect = (movie: Movie) => {
     setSelectedMovie(movie);
@@ -54,7 +54,7 @@ function App() {
     <>
       <Toaster />
       <SearchBar onSubmit={handleSearch} />
-      {movies.length > 0 && (
+      {isSuccess && movies.length > 0 && (
         <MovieGrid movies={movies} onSelect={handleSelect} />
       )}
       {isLoading && <Loader />}
@@ -62,9 +62,9 @@ function App() {
       {selectedMovie && (
         <MovieModal movie={selectedMovie} onClose={handleClose} />
       )}
-      {data && totalPages > 1 && (
+      {isSuccess && totalPages > 1 && (
         <Pagination
-          totalPages={totalPages}
+          pageCount={totalPages}
           page={currentPage}
           setPage={setCurrentPage}
         />
