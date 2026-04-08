@@ -13,22 +13,22 @@ const ReactPaginate = (
 
 interface PaginationProps {
   pageCount: number;
-  page: number;
-  setPage: (nextPage: number) => void;
+  forcePage: number;
+  onPageChange: (nextPage: number) => void;
 }
 
 export default function Pagination({
   pageCount,
-  page,
-  setPage,
+  forcePage,
+  onPageChange,
 }: PaginationProps) {
   return (
     <ReactPaginate
     pageCount={pageCount}
     pageRangeDisplayed={5}
     marginPagesDisplayed={1}
-    onPageChange={({ selected }) => setPage(selected + 1)}
-    forcePage={page - 1}
+    onPageChange={({ selected }) => onPageChange(selected + 1)}
+    forcePage={forcePage - 1}
     containerClassName={css.pagination}
     activeClassName={css.active}
     nextLabel="→"

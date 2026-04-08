@@ -7,7 +7,7 @@ import Loader from "../Loader/Loader";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import MovieGrid from "../MovieGrid/MovieGrid";
 import MovieModal from "../MovieModal/MovieModal";
-import Pagination from "../ReactPaginate/ReactPaginate";
+import Pagination from "../Pagination/Pagination";
 
 import { fetchMovies } from "../../services/movieService";
 import type { Movie } from "../../types/movie";
@@ -15,6 +15,7 @@ import type { Movie } from "../../types/movie";
 import toast, { Toaster } from "react-hot-toast";
 
 import "./App.module.css";
+import ReactPaginate from "react-paginate";
 
 function App() {
   const [query, setQuery] = useState("");
@@ -37,10 +38,10 @@ function App() {
   };
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess && movies.length === 0) {
       toast('No movies found on your request');
     }
-  }, [isSuccess]);
+  }, [isSuccess, movies.length]);
 
   const handleSelect = (movie: Movie) => {
     setSelectedMovie(movie);
@@ -64,9 +65,9 @@ function App() {
       )}
       {isSuccess && totalPages > 1 && (
         <Pagination
-          pageCount={totalPages}
-          page={currentPage}
-          setPage={setCurrentPage}
+        pageCount={totalPages}
+        forcePage={currentPage}
+        onPageChange={setCurrentPage}
         />
       )}
     </>
