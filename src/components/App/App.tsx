@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useQuery } from '@tanstack/react-query';
+import { useEffect } from "react";
 
 import SearchBar from "../SearchBar/SearchBar";
 import Loader from "../Loader/Loader";
@@ -14,26 +16,25 @@ import toast, { Toaster } from "react-hot-toast";
 import "./App.module.css";
 
 function App() {
-  const [movies, setMovies] = useState<Movie[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
+  const [query, setQuery] = useState('');
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
+  const {data, isLoading, isError } = useQuery({
+    queryKey: ['movies', query],
+    queryFn: () => fetchMovies(query),
+    enabled: query !== ''
+  });
+
+  const movies = data ?? [];
+
   const handleSearch = async (query: string) => {
-    try {
-      setIsLoading(true);
-      setIsError(false);
-      setMovies([]);
-      const result = await fetchMovies(query);
-      setMovies(result);
-      if (result.length === 0) {
-        toast("No movies found on your request");
+    setQuery(query);
+
+    useEffect(() => {
+      if (data && movies.length === 0) {
+        toast('No movies found on your request');
       }
-    } catch {
-      setIsError(true);
-    } finally {
-      setIsLoading(false);
-    }
+    }, [data, movies.length]);
   };
 
   const handleSelect = (movie: Movie) => {
